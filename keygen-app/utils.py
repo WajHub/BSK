@@ -1,4 +1,5 @@
 from hashlib import sha256
+import base64
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 from Crypto.Util.Padding import pad,unpad
@@ -36,8 +37,9 @@ def encrypt_private_key(private_key, pin):
     padded_private_key = pad(private_key, AES.block_size)
     
     ct_bytes = cipher.encrypt(padded_private_key)
-    
-    return ct_bytes
+    ct_base64 = base64.b64encode(ct_bytes).decode('utf-8')
+
+    return ct_base64
 
 
 
