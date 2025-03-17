@@ -1,5 +1,9 @@
+import os
 from tkinter import *
 from tkinter import ttk, messagebox
+from utils import generate_rsa_keys, encrypt_private_key
+
+os.makedirs("keys", exist_ok=True)
 
 class KeyGenApp:
     def __init__(self):
@@ -60,9 +64,19 @@ class KeyGenApp:
             messagebox.showerror("Invalid PIN", error_msg)
             return
         
-        # TODO: Add your key generation logic here
+        
+        private_key, public_key = generate_rsa_keys()
+        encrypted_private_key = encrypt_private_key(private_key, pin)
+
+        with open("keys/private.pem", "wb") as f:
+            f.write(encrypted_private_key)
+        
+        with open("keys/public.pem", "wb") as f:
+            f.write(public_key)
+
         messagebox.showinfo("Success", "Keys generated successfully!")
         self.pin_entry.delete(0, END)
+        
 
     def run(self):
         self.root.mainloop()
