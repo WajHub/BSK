@@ -2,6 +2,7 @@
   "name": "main-app",
   "private": true,
   "version": "0.0.0",
+  "type": "module",
   "main": "electron.js",
   "scripts": {
     "dev": "vite",
@@ -13,8 +14,12 @@
     "main": "electron.js"
   },
   "dependencies": {
+    "crypto-js": "^4.2.0",
+    "drivelist": "^12.0.2",
+    "node-gyp": "^11.1.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "usb": "^2.15.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
@@ -24,6 +29,7 @@
     "electron": "^35.0.2",
     "electron-builder": "^25.1.8",
     "electron-is-dev": "^3.0.1",
+    "electron-reload": "^2.0.0-alpha.1",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
