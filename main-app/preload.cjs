@@ -2,7 +2,7 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 const API = {
   ping: () => ipcRenderer.invoke("ping"),
-  loadKey: () => ipcRenderer.invoke("load-key"),
+  loadKey: (pin) => ipcRenderer.invoke("load-key", pin),
 };
 
 contextBridge.exposeInMainWorld("api", API);
