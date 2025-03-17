@@ -2,15 +2,13 @@ import "./App.css";
 import { useState } from "react";
 
 function App() {
-  const [key_is_loaded, setKeyIsLoaded] = useState(false);
+  const [message, setMessage] = useState("Key is not loaded");
   const [pin, setPin] = useState("");
 
   const onSubmit = async () => {
-    window.api.loadKey(pin).then((res) => {
+    await window.api.loadKey(pin).then((res) => {
       console.log(res);
-      if (res != null && res != "" && res != undefined) {
-        setKeyIsLoaded(true);
-      }
+      setMessage(res.message);
     });
   };
 
@@ -37,9 +35,7 @@ function App() {
 
         <p></p>
       </div>
-      <p>
-        {key_is_loaded ? "Private key is loaded" : "Private key is not loaded"}
-      </p>
+      <p>{message}</p>
     </>
   );
 }
