@@ -5,7 +5,8 @@ from Crypto.Util.Padding import pad,unpad
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
-
+## @brief Generates RSA 4096-bit keys.
+# @return Tuple containing private and public keys.
 def generate_rsa_keys():
     # Generate a private key
     private_key = rsa.generate_private_key(

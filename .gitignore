@@ -60,3 +60,5 @@ coverage/
 
 # Ignore Mac specific files
 *.swp
+
+__pycache__/
