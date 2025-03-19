@@ -1,7 +1,7 @@
 import os
 from tkinter import *
 from tkinter import ttk, messagebox
-from utils import generate_rsa_keys, encrypt_private_key
+from crypto import generate_rsa_keys, encrypt_private_key, serialize_private_key
 import base64
 os.makedirs("keys", exist_ok=True)
 
@@ -65,14 +65,9 @@ class KeyGenApp:
             return
         
         
-        private_key, public_key = generate_rsa_keys()
+        private_key = generate_rsa_keys()
         encrypted_private_key = encrypt_private_key(private_key, pin)
-
-        with open("keys/private.pem", "wb") as f:
-            f.write(encrypted_private_key.encode('utf-8'))
-        
-        with open("keys/public.pem", "wb") as f:
-            f.write(public_key)
+        serialize_private_key(private_key)
 
         messagebox.showinfo("Success", "Keys generated successfully!")
         self.pin_entry.delete(0, END)
