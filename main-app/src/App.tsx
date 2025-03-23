@@ -7,15 +7,31 @@ function App() {
     message: "Key is not loaded",
     state: "",
   });
-  const [pin, setPin] = useState("");
-  const [file, setFile] = useState<FileReader | null>(null);
+  const [verificationMessage, setVerificationMessage] = useState<string>(
+    "File has not been chosen"
+  );
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [pin, setPin] = useState("");
+
+  const [fileToSign, setFileToSign] = useState<FileReader | null>(null);
+  const [fileToVerify, setFileToVerify] = useState<FileReader | null>(null);
+
+  const handleFileToSignChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const chosen_file = e.target.files[0];
       const fileReader = new FileReader();
       fileReader.readAsArrayBuffer(chosen_file);
-      setFile(fileReader);
+      setFileToSign(fileReader);
+      console.log(fileReader);
+    }
+  };
+
+  const handleFileToVerifyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const chosen_file = e.target.files[0];
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(chosen_file);
+      setFileToVerify(fileReader);
       console.log(fileReader);
     }
   };
@@ -29,9 +45,18 @@ function App() {
   };
 
   const onSign = async () => {
-    console.log(file);
-    await window.api.signFile(file.result).then((res) => {
+    console.log(fileToSign);
+    await window.api.signFile(fileToSign?.result).then((res) => {
       console.log(res);
+      setMessage(res);
+    });
+  };
+
+  const onVerify = async () => {
+    console.log(fileToVerify);
+    await window.api.verifyFile(fileToVerify?.result).then((res) => {
+      console.log(res);
+      setVerificationMessage(res.message);
     });
   };
 
@@ -42,6 +67,8 @@ function App() {
         <input
           type="password"
           placeholder="Enter pin"
+          className="input input-accent"
+          style={{ margin: "10px" }}
           onChange={(e) => {
             setPin(e.target.value);
             console.log(pin);
@@ -59,17 +86,17 @@ function App() {
         <p>{message.message}</p>
         {message.state === "success" && (
           <div>
-            <label>Select a file:</label>
+            <label>Select a file to sign:</label>
             <input
               type="file"
               name="myfile"
               accept=".pdf"
-              onChange={handleFileChange}
+              onChange={handleFileToSignChange}
             ></input>
             <button
               onClick={(e) => {
                 e.preventDefault();
-                console.log("File selected");
+                console.log("File to sign selected");
                 onSign();
               }}
             >
@@ -77,6 +104,26 @@ function App() {
             </button>
           </div>
         )}
+      </div>
+      <hr></hr>
+      <div>
+        <label>Select a file to verify:</label>
+        <input
+          type="file"
+          name="myfile2"
+          accept=".pdf"
+          onChange={handleFileToVerifyChange}
+        ></input>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            console.log("File To verify selected");
+            onVerify();
+          }}
+        >
+          Verify File
+        </button>
+        <p>{verificationMessage}</p>
       </div>
     </>
   );

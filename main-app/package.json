@@ -14,9 +14,6 @@
     "main": "electron.js"
   },
   "dependencies": {
-    "@signpdf/placeholder-pdf-lib": "^3.2.4",
-    "@signpdf/signer-p12": "^3.2.4",
-    "@signpdf/signpdf": "^3.2.5",
     "crypto": "^1.0.1",
     "crypto-js": "^4.2.0",
     "drivelist": "^12.0.2",

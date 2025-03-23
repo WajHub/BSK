@@ -10,7 +10,8 @@ declare global {
     api: {
       ping: () => Promise<string>;
       loadKey: (pin: string) => Promise< Message>;
-      signFile: (file: FileReader | null) => Promise<Message>;
+      signFile: (file: string | ArrayBuffer | null | undefined) => Promise<Message>;
+      verifyFile: (file: string | ArrayBuffer | null | undefined) => Promise<Message>;
     };
   }
 }
