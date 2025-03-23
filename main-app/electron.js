@@ -11,7 +11,6 @@ import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const SIGNATURE_LENGTH = 512;
-var test_sginature = null;
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -48,25 +47,37 @@ ipcMain.handle("verify-file", verify_file);
 
 async function verify_file(_event, file) {
   try {
-    const public_key = fs.readFileSync(
+    const public_rsa_key = fs.readFileSync(
       path.join(__dirname, "../keygen-app/keys/public.pem"),
       "utf8"
     );
     const fileBuffer = Buffer.from(file);
-    const verify = crypto.createVerify("SHA256");
-    verify.update(fileBuffer);
-    verify.end();
 
-    const fileData = fileBuffer.subarray(0, -SIGNATURE_LENGTH); // Dane PDF-a (bez podpisu)
-    const signature = fileBuffer.subarray(-SIGNATURE_LENGTH); // Ostatnie bajty - podpis
+    const fileData = fileBuffer.subarray(0, -SIGNATURE_LENGTH);
+    const signature = fileBuffer.subarray(-SIGNATURE_LENGTH);
+
+    const verify = crypto.createVerify("SHA256");
+    verify.update(fileData);
+    verify.end();
 
     console.log("Data length:", fileData.length);
     console.log("Signature length:", signature.length);
 
-    console.log(verify.verify(public_key, test_sginature, "hex"));
+    if (verify.verify(public_rsa_key, signature, "hex")) {
+      return {
+        state: "success",
+        message: "Pdf is correctly signed",
+        data: null,
+      };
+    } else {
+      return {
+        state: "error",
+        message: "Pdf is not correctly signed",
+        data: null,
+      };
+    }
   } catch (err) {
-    console.error(err);
-    return "Public key not found";
+    return { state: "error", message: "Public key not found", data: null };
   }
 }
 
@@ -82,7 +93,6 @@ async function sign_file(_event, file) {
       sign.end();
 
       const signature = sign.sign(private_rsa_key);
-      test_sginature = signature;
       fs.writeFileSync(
         path.join(__dirname, "../signed_.pdf"),
         Buffer.concat([fileBuffer, signature])

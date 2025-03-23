@@ -7,9 +7,11 @@ function App() {
     message: "Key is not loaded",
     state: "",
   });
-  const [verificationMessage, setVerificationMessage] = useState<string>(
-    "File has not been chosen"
-  );
+  const [verificationMessage, setVerificationMessage] = useState<Message>({
+    data: "",
+    message: "File has not been chosen",
+    state: "",
+  });
 
   const [pin, setPin] = useState("");
 
@@ -56,7 +58,7 @@ function App() {
     console.log(fileToVerify);
     await window.api.verifyFile(fileToVerify?.result).then((res) => {
       console.log(res);
-      setVerificationMessage(res.message);
+      setVerificationMessage(res);
     });
   };
 
@@ -123,7 +125,7 @@ function App() {
         >
           Verify File
         </button>
-        <p>{verificationMessage}</p>
+        <p>{verificationMessage.message}</p>
       </div>
     </>
   );
