@@ -48,7 +48,12 @@ class KeyGenApp:
         main_frame.columnconfigure(0, weight=1)
 
     def validate_pin(self, pin):
-        """Check if PIN is exactly 4 numeric digits"""
+        """!
+        @brief Funkcja sprawdzająca poprawność PINu
+        @param pin PIN podany przez użytkownika
+        @return True jeśli PIN jest poprawny, False w przeciwnym wypadku oraz komunikat błędu
+        """
+
         if len(pin) != 4:
             return False, "PIN must be exactly 4 digits"
         if not pin.isdigit():
@@ -56,6 +61,9 @@ class KeyGenApp:
         return True, ""
 
     def generate_keys(self):
+        """!
+        @brief Funkcja wywołuje odpowiednie metody z modułu crypto.py
+        """
         pin = self.pin_entry.get()
         
         # Validate PIN
