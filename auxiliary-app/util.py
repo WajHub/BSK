@@ -59,6 +59,9 @@ def encrypt_private_key(private_key, pin):
     ct_bytes = cipher.encrypt(padded_private_key)
     ct_base64 = base64.b64encode(ct_bytes).decode('utf-8')
 
+    print("PRIVATE KEY: ", private_key)
+    print("ENCRYPTED PRIVATE KEY: ", ct_base64)
+
     return ct_base64
 
 

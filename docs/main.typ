@@ -46,8 +46,10 @@ Głównym celem projektu było opracowanie aplikacji umożliwiającej emulację 
   - `drivelist` – do automatycznego wykrywania pendrive’a z kluczem.
 
 
+
 = Literatura
  - https://nodejs.org/api/crypto.html
  - https://www.electronjs.org/docs/latest
  - https://dev.to/aaronktberry/generating-encrypted-key-pairs-in-python-69b
  - https://ritwik-69146.medium.com/encrypt-and-decrypt-your-data-using-aes-and-rsa-algorithm-e6a19bc1f29c
+
