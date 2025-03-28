@@ -109,7 +109,7 @@ async function sign_file(_event, file) {
 async function encode_key(_event, pin) {
   return await load_data_from_pendrive().then((encrypted_key_base64) => {
     if (encrypted_key_base64 == null) {
-      return { state: "error", message: "No USB found", data: null };
+      return { state: "error", message: "Key has not been found!", data: null };
     } else {
       var hash_pin = sha256(pin);
       const encrypted_key = CryptoJS.enc.Base64.parse(encrypted_key_base64);
@@ -138,10 +138,10 @@ async function load_data_from_pendrive() {
   const drives = await drivelist.list();
   for (const drive of drives) {
     if (drive.busType === "USB" && drive.mountpoints.length > 0) {
-      const path_to_usb = drive.mountpoints[0].path;
+      const path_to_usb = drive.mountpoints[0].path + "/keys";
       const files = fs.readdirSync(path_to_usb);
       for (const fileName of files) {
-        if (fileName === "private.pem") {
+        if (fileName === "private_key.pem") {
           const filePath = path.join(path_to_usb, fileName);
           try {
             const data = fs.readFileSync(filePath, "utf8");

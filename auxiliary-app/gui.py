@@ -8,6 +8,7 @@ import psutil
 from tkinter import *
 from tkinter import ttk, messagebox
 from util import generate_private_key
+import platform
 
 class AppGUI:
     def __init__(self):
@@ -100,9 +101,20 @@ class AppGUI:
         @return Lista urządzeń USB
         """
         usb_devices = []
-        for partition in psutil.disk_partitions():
-            if 'removable' in partition.opts:
-                usb_devices.append(partition.mountpoint)
+
+        if platform.system() == "Darwin":
+            volumes_path = "/Volumes"
+            if os.path.exists(volumes_path):
+                usb_devices = [os.path.join(volumes_path, d) for d in os.listdir(volumes_path)]
+        else:  
+            for partition in psutil.disk_partitions():
+                print(partition)
+                if 'removable' in partition.opts:
+                    usb_devices.append(partition.mountpoint)
+
+        print("Available USB devices:")
+        for usb in usb_devices:
+            print(usb)
         return usb_devices
     
     def select_usb_device(self):
