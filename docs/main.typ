@@ -111,15 +111,79 @@ aes_key = SHA256.new(pin.encode()).digest()
     return ct_base64
 ```
 
+= Główna aplikacja
+Aplikacja umożliwia odczyt klucza prywatnego z nosnika usb. Odszyfrowanie klucza prywatnego, a nastepnie podpisanie dokumentu PDF. Do odczytania klucza prywatnego wykorzystaliśmy bibliotekę *CryptoJS*.
+```javascript
+async function encode_key(_event, pin) {
+  return await load_data_from_pendrive().then((encrypted_key_base64) => {
+    if (encrypted_key_base64 == null) {
+      return { state: "error", message: "Key has not been found!", data: null };
+    } else {
+      var hash_pin = sha256(pin);
+      const encrypted_key = CryptoJS.enc.Base64.parse(encrypted_key_base64);
+      try {
+        const decrypted = CryptoJS.AES.decrypt(
+          { ciphertext: encrypted_key },
+          hash_pin,
+          {
+            mode: CryptoJS.mode.ECB,
+            padding: CryptoJS.pad.Pkcs7,
+          }
+        );
+        const decryptedPem = decrypted.toString(CryptoJS.enc.Utf8);
+        console.log("DECRYPTED PEM (UTF-8):", decryptedPem);
+        private_rsa_key = decryptedPem;
+        return { state: "success", message: "Key is loaded", data: null };
+      } catch (err) {
+        console.log(err);
+        return { state: "error", message: "Invalid PIN", data: null };
+      }
+    }
+  });
+}
+```
+
+Weryfikacja podpisu z użyciem biblioteki *crypto*: 
+```javascript
+    const public_rsa_key = await load_public_key();
+    const fileBuffer = Buffer.from(file);
+
+    const fileData = fileBuffer.subarray(0, -SIGNATURE_LENGTH);
+    const signature = fileBuffer.subarray(-SIGNATURE_LENGTH);
+
+    const verify = crypto.createVerify("SHA256");
+    verify.update(fileData);
+    verify.end();
+```
+
+Podpisywanie pliku PDF z użyciem biblioteki *crypto*:
+```javascript
+    const fileBuffer = Buffer.from(file);
+    const sign = crypto.createSign("SHA256");
+    sign.update(fileBuffer);
+    sign.end();
+
+    const signature = sign.sign(private_rsa_key);
+    fs.writeFileSync(
+      path.join(__dirname, "../signed_.pdf"),
+      Buffer.concat([fileBuffer, signature])
+    );
+```
+
+
 = Wykorzystane technologie
 == Język programowania
-Aplikacja pomocnicza została napisana w języku Python, ze względu na bogatą ofertę bibliotek kryptograficznych oraz prostotę implementacji algorytmów kryptograficznych.
+- Aplikacja pomocnicza została napisana w języku Python, ze względu na bogatą ofertę bibliotek kryptograficznych oraz prostotę implementacji algorytmów kryptograficznych.
+- Aplikacja do podpisywania dokumentów została napisana w języku JavaScript z wykorzystaniem frameworka Electron, który umożliwia tworzenie aplikacji desktopowych przy użyciu technologii webowych (HTML, CSS, JavaScript). Dzięki temu możliwe jest łatwe tworzenie interfejsu użytkownika oraz integracja z systemem operacyjnym.
 == Biblioteki kryptograficzne
-Do generowania kluczy RSA oraz szyfrowania klucza prywatnego wykorzystaliśmy bibliotekę cryptography, która zapewnia interfejs do biblioteki OpenSSL. Do szyfrowania klucza prywatnego z wykorzystaniem algorytmu AES skorzystaliśmy z biblioteki Crypto.
+- Do generowania kluczy RSA oraz szyfrowania klucza prywatnego wykorzystaliśmy bibliotekę cryptography, która zapewnia interfejs do biblioteki OpenSSL. Do szyfrowania klucza prywatnego z wykorzystaniem algorytmu AES skorzystaliśmy z biblioteki Crypto.
+- Do podpisywania dokumentów PDF oraz weryfikacji podpisu wykorzystaliśmy bibliotekę crypto, która jest standardową biblioteką kryptograficzną dla języka JavaScript.
 == Interfejs użytkownika
-Do stworzenia interfejsu użytkownika wykorzystaliśmy bibliotekę Tkinter, która jest standardowym interfejsem graficznym dla języka Python.
+- Do stworzenia interfejsu użytkownika wykorzystaliśmy bibliotekę Tkinter, która jest standardowym interfejsem graficznym dla języka Python.
+- Interfejs głównej aplikacji został stworzony przy użyciu biblioteki React. 
 == Obsługa nośnika USB
-Do obsługi nośnika USB wykorzystaliśmy bibliotekę psutil służąca do zarządzania procesami oraz dostępem do informacji o urządzeniach systemowych, w tym nośnikach USB.
+- Do obsługi nośnika USB wykorzystaliśmy bibliotekę psutil służąca do zarządzania procesami oraz dostępem do informacji o urządzeniach systemowych, w tym nośnikach USB.
+- Do odczytu i zapisu danych na nośniku USB wykorzystaliśmy drivelist.
 == System kontroli wersji
 Do zarządzania kodem źródłowym wykorzystaliśmy system kontroli wersji Git oraz platformę GitHub do przechowywania kodu źródłowego.
 == Dokumentacja
@@ -158,6 +222,29 @@ W przypadku błędu podczas zapisu klucza prywatnego użytkownik zostaje poinfor
 #figure(
   image("images/error.png", width: 70%),
   caption: [Okno informujące o błędzie],
+)
+
+= Interfejs graficzny aplikacji głównej
+
+== Podpisywanie dokumentów
+W celu podpisania dokumentu, użytkownik najpierw musi wprowadzić poprawny PIN. Aplikacja informuje w przypadku błędnego pinu lub braku nośnika USB. 
+#figure(
+  image("images/src1.png", width: 70%),
+  caption: [Główne okno aplikacji],
+)
+
+Po poprawnym wprowadzeniu PINu użytkownik może wybrać plik PDF, który chce podpisać. Następnie aplikacja generuje podpis elektroniczny i zapisuje go w pliku PDF w głównym folderze projektu. Użytkownik zostaje poinformowany o sukcesie operacji.
+#figure(
+  image("images/src2.png", width: 70%),
+  caption: [Wprowadzenie poprawnego PINU],
+)
+
+== Weryfikacja podpisu
+
+Aplikacja umożliwia również weryfikację podpisu elektronicznego. Użytkownik musi wybrać plik PDF, który chce zweryfikować. Aplikacja informuje użytkownika o poprawności lub błędzie podpisu.
+#figure(
+  image("images/src3.png", width: 70%),
+  caption: [Weryfikacja podpisu],
 )
 
 = Dokumentacja

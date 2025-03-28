@@ -47,10 +47,7 @@ ipcMain.handle("verify-file", verify_file);
 
 async function verify_file(_event, file) {
   try {
-    const public_rsa_key = fs.readFileSync(
-      path.join(__dirname, "../keygen-app/keys/public.pem"),
-      "utf8"
-    );
+    const public_rsa_key = await load_public_key();
     const fileBuffer = Buffer.from(file);
 
     const fileData = fileBuffer.subarray(0, -SIGNATURE_LENGTH);
@@ -77,6 +74,7 @@ async function verify_file(_event, file) {
       };
     }
   } catch (err) {
+    console.error(err);
     return { state: "error", message: "Public key not found", data: null };
   }
 }
@@ -98,7 +96,7 @@ async function sign_file(_event, file) {
         Buffer.concat([fileBuffer, signature])
       );
 
-      return { state: "success", message: "File signed", data: null };
+      return { state: "success", message: "File has been signed", data: null };
     } catch (error) {
       console.error(error);
       return { state: "error", message: error.message, data: null };
@@ -142,6 +140,29 @@ async function load_data_from_pendrive() {
       const files = fs.readdirSync(path_to_usb);
       for (const fileName of files) {
         if (fileName === "private_key.pem") {
+          const filePath = path.join(path_to_usb, fileName);
+          try {
+            const data = fs.readFileSync(filePath, "utf8");
+            return data;
+          } catch (err) {
+            console.error(err);
+            return null;
+          }
+        }
+      }
+    }
+  }
+  return null;
+}
+
+async function load_public_key() {
+  const drives = await drivelist.list();
+  for (const drive of drives) {
+    if (drive.busType === "USB" && drive.mountpoints.length > 0) {
+      const path_to_usb = drive.mountpoints[0].path + "/keys";
+      const files = fs.readdirSync(path_to_usb);
+      for (const fileName of files) {
+        if (fileName === "public_key.pem") {
           const filePath = path.join(path_to_usb, fileName);
           try {
             const data = fs.readFileSync(filePath, "utf8");
