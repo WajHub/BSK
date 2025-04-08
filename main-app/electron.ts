@@ -10,7 +10,13 @@ const __filename = process.argv[1];
 const __dirname = path.dirname(__filename);
 const SIGNATURE_LENGTH = 512;
 
-const createWindow = () => {
+/**
+ * Tworzy głowne okno aplikacji Electron.
+ * Ustawia wymiary okna oraz wczytuje stronę główną.
+ * 
+ * @returns {void}
+ */
+export const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
     height: 600,
@@ -21,6 +27,7 @@ const createWindow = () => {
 
   win.loadURL("http://localhost:5173");
 };
+
 
 app.whenReady().then(() => {
   createWindow();
@@ -43,7 +50,14 @@ ipcMain.handle("load-key", encode_key);
 ipcMain.handle("sign-file", sign_file);
 ipcMain.handle("verify-file", verify_file);
 
-async function verify_file(_event: Electron.IpcMainInvokeEvent, file: Buffer): Promise<any> {
+/**
+ * Weryfikuje podpis pliku za pomocą klucza publicznego RSA.
+ * 
+ * @param {Electron.IpcMainInvokeEvent} _event - Obiekt zdarzenia IPC.
+ * @param {Buffer} file - Bufor zawierający dane pliku oraz podpis.
+ * @returns {Promise<{state: string, message: string, data: any}>} - Zwraca wynik weryfikacji.
+ */
+export async function verify_file(_event: Electron.IpcMainInvokeEvent, file: Buffer): Promise<any> {
   try {
     const public_rsa_key = await load_public_key();
     const fileBuffer = Buffer.from(file);
@@ -76,7 +90,14 @@ async function verify_file(_event: Electron.IpcMainInvokeEvent, file: Buffer): P
     return { state: "error", message: "Public key not found", data: null };
   }
 }
-async function sign_file(_event: Electron.IpcMainInvokeEvent, file: Buffer | null): Promise<any> {
+/**
+ * Podpisuje plik za pomocą zdekodowanego klucza prywatnego RSA.
+ * 
+ * @param {Electron.IpcMainInvokeEvent} _event - Obiekt zdarzenia IPC.
+ * @param {Buffer | null} file - Bufor zawierający dane pliku do podpisania.
+ * @returns {Promise<{state: string, message: string, data: any}>} - Zwraca wynik podpisywania.
+ */
+export async function sign_file(_event: Electron.IpcMainInvokeEvent, file: Buffer | null): Promise<any> {
   if (!file) {
     console.error("Invalid file: File is null or undefined");
     return { state: "error", message: "Invalid file provided", data: null };
@@ -105,13 +126,15 @@ async function sign_file(_event: Electron.IpcMainInvokeEvent, file: Buffer | nul
     }
   }
 }
+
 /**
- * Calculates the square root of a number.
- *
- * @param x the number to calculate the root of.
- * @returns the square root if `x` is non-negative or `NaN` if `x` is negative.
+ * Dekoduje klucz prywatny RSA odpowiednim algorytmem i PIN-em.
+ * 
+ * @param {Electron.IpcMainInvokeEvent} _event - Obiekt zdarzenia IPC.
+ * @param {string} pin - PIN do odszyfrowania klucza.
+ * @returns {Promise<{state: string, message: string, data: any}>} - Zwraca wynik ładowania klucza.
  */
-async function encode_key(_event: Electron.IpcMainInvokeEvent, pin: string): Promise<any> {
+export async function encode_key(_event: Electron.IpcMainInvokeEvent, pin: string): Promise<any> {
   return await load_data_from_pendrive().then((encrypted_key_base64) => {
     if (encrypted_key_base64 == null) {
       return { state: "error", message: "Key has not been found!", data: null };
@@ -142,7 +165,12 @@ async function encode_key(_event: Electron.IpcMainInvokeEvent, pin: string): Pro
   });
 }
 
-async function load_data_from_pendrive() {
+/**
+ * Wczytuje zakodowany klucz prywatny RSA z pendrive'a.
+ * 
+ * @returns {Promise<string | null>} - Zwraca klucz prywatny lub null, jeśli nie znaleziono.
+ */
+export async function load_data_from_pendrive() {
   const drives = await drivelist.list();
   for (const drive of drives) {
     if (drive.busType === "USB" && drive.mountpoints.length > 0) {
@@ -165,7 +193,12 @@ async function load_data_from_pendrive() {
   return null;
 }
 
-async function load_public_key() {
+/**
+ * Wczytuje klucz publiczny RSA.
+ * 
+ * @returns {Promise<string | null>} - Zwraca klucz publiczny lub null, jeśli nie znaleziono.
+ */
+export async function load_public_key() {
   const drives = await drivelist.list();
   for (const drive of drives) {
     if (drive.busType === "USB" && drive.mountpoints.length > 0) {

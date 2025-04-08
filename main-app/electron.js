@@ -46,6 +46,12 @@ var crypto = require("crypto");
 var __filename = process.argv[1];
 var __dirname = path.dirname(__filename);
 var SIGNATURE_LENGTH = 512;
+/**
+ * Tworzy głowne okno aplikacji Electron.
+ * Ustawia wymiary okna oraz wczytuje stronę główną.
+ *
+ * @returns {void}
+ */
 var createWindow = function () {
     var win = new electron_1.BrowserWindow({
         width: 800,
@@ -56,6 +62,13 @@ var createWindow = function () {
     });
     win.loadURL("http://localhost:5173");
 };
+/**
+ * Obsługuje zdarzenie uruchomienia aplikacji Electron.
+ * Tworzy okno aplikacji, gdy jest gotowe do wyświetlenia.
+ * Obsługuje zdarzenie aktywacji aplikacji na systemach macOS.
+ *
+ * @returns {void}
+ */
 electron_1.app.whenReady().then(function () {
     createWindow();
     electron_1.app.on("activate", function () {
@@ -74,6 +87,13 @@ electron_1.ipcMain.handle("ping", function () { return "pong"; });
 electron_1.ipcMain.handle("load-key", encode_key);
 electron_1.ipcMain.handle("sign-file", sign_file);
 electron_1.ipcMain.handle("verify-file", verify_file);
+/**
+ * Weryfikuje podpis pliku za pomocą klucza publicznego RSA.
+ *
+ * @param {Electron.IpcMainInvokeEvent} _event - Obiekt zdarzenia IPC.
+ * @param {Buffer} file - Bufor zawierający dane pliku oraz podpis.
+ * @returns {Promise<{state: string, message: string, data: any}>} - Zwraca wynik weryfikacji.
+ */
 function verify_file(_event, file) {
     return __awaiter(this, void 0, void 0, function () {
         var public_rsa_key, fileBuffer, fileData, signature, verify, err_1;
@@ -147,12 +167,6 @@ function sign_file(_event, file) {
         });
     });
 }
-/**
- * Calculates the square root of a number.
- *
- * @param x the number to calculate the root of.
- * @returns the square root if `x` is non-negative or `NaN` if `x` is negative.
- */
 function encode_key(_event, pin) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {

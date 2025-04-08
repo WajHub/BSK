@@ -4,7 +4,7 @@
     "name": "Main App Documentation",
     "hideGenerator": true,
     "entryPoints": [
-        "./electron.ts",
+        "electron.ts",
         "src/App.tsx"
     ]
 }

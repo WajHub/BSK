@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
-import { useState } from "react";
 
 /**
- * Typ dla komunikatu o stanie operacji.
+ * Typ reprezentujący wiadomość zwrotną.
  * @typedef {Object} Message
- * @property {string} data - Dodatkowe dane (zazwyczaj puste).
- * @property {string} message - Główna wiadomość.
- * @property {string} state - Stan operacji, np. "success" lub "error".
+ * @property {string} data - Dodatkowe dane zwrócone przez operację.
+ * @property {string} message - Wiadomość informująca o stanie operacji.
+ * @property {string} state - Stan operacji (np. "success", "error").
  */
-type Message = {
+export type Message = {
   data: string;
   message: string;
   state: string;
@@ -21,7 +20,7 @@ type Message = {
  * w zakresie ładowania klucza RSA, podpisywania i weryfikowania plików PDF.
  * @returns {JSX.Element} Komponent renderujący UI aplikacji.
  */
-function App() {
+export function App() {
   const [message, setMessage] = useState<Message>({
     data: "",
     message: "Key is not loaded",
@@ -39,11 +38,6 @@ function App() {
   const [fileToSign, setFileToSign] = useState<FileReader | null>(null);
   const [fileToVerify, setFileToVerify] = useState<FileReader | null>(null);
 
-  /**
-   * Funkcja obsługująca zmianę wybranego pliku do podpisania.
-   * Wczytuje plik i zapisuje go do stanu.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - Zdarzenie zmiany pliku.
-   */
   const handleFileToSignChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const chosen_file = e.target.files[0];
@@ -54,11 +48,6 @@ function App() {
     }
   };
 
-  /**
-   * Funkcja obsługująca zmianę wybranego pliku do weryfikacji.
-   * Wczytuje plik i zapisuje go do stanu.
-   * @param {React.ChangeEvent<HTMLInputElement>} e - Zdarzenie zmiany pliku.
-   */
   const handleFileToVerifyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const chosen_file = e.target.files[0];
@@ -69,10 +58,6 @@ function App() {
     }
   };
 
-  /**
-   * Funkcja do ładowania klucza RSA na podstawie wprowadzonego PIN-u.
-   * @returns {Promise<void>} Zwraca obietnicę po zakończeniu ładowania klucza.
-   */
   const onSubmit = async () => {
     await window.api.loadKey(pin).then((res) => {
       setPin("");
@@ -81,10 +66,6 @@ function App() {
     });
   };
 
-  /**
-   * Funkcja do podpisywania wybranego pliku.
-   * @returns {Promise<void>} Zwraca obietnicę po zakończeniu podpisywania.
-   */
   const onSign = async () => {
     console.log(fileToSign);
     await window.api.signFile(fileToSign?.result).then((res) => {
@@ -93,10 +74,6 @@ function App() {
     });
   };
 
-  /**
-   * Funkcja do weryfikacji podpisu wybranego pliku.
-   * @returns {Promise<void>} Zwraca obietnicę po zakończeniu weryfikacji.
-   */
   const onVerify = async () => {
     console.log(fileToVerify);
     await window.api.verifyFile(fileToVerify?.result).then((res) => {
@@ -150,7 +127,7 @@ function App() {
           </div>
         )}
       </div>
-      <hr></hr>
+      <hr />
       <div>
         <label>Select a file to verify:</label>
         <input
@@ -158,7 +135,7 @@ function App() {
           name="myfile2"
           accept=".pdf"
           onChange={handleFileToVerifyChange}
-        ></input>
+        />
         <button
           onClick={(e) => {
             e.preventDefault();
@@ -173,5 +150,3 @@ function App() {
     </>
   );
 }
-
-export default App;
