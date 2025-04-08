@@ -1,13 +1,4 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
-    }
-  ],
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
@@ -26,7 +17,8 @@
     "noEmit": true
   },
   "include": [
-    "src",
-    "src/global.d.ts"
+    "src/App.tsx",
+    "src/global.d.ts",
+    "electron.ts"
   ]
 }
