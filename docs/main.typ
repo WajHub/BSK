@@ -172,6 +172,18 @@ Podpisywanie pliku PDF z użyciem biblioteki *crypto*:
     );
 ```
 
+= Opis błędów 
+Próba wpisania Nieprawidłowego pinu powoduje wyświetlenie komunikatu o błędzie. Aplikacja informuje użytkownika o błędzie oraz prosi o ponowne wprowadzenie PINu.
+#figure(
+  image("images/blad1.png", width: 70%),
+  caption: [Nieprawidłowy PIN],
+)
+
+Weryfikacja perzerobionego pliku PDF po podpisaniu, informuje o nieprawidłowym podpisie.
+#figure(
+  image("images/blad2.png", width: 70%),
+  caption: [Nieprawidłowy PIN],
+)
 
 = Wykorzystane technologie
 == Język programowania
