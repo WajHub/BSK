@@ -1,0 +1,10 @@
+{
+    "out": "docs",
+    "theme": "default",
+    "name": "Main App Documentation",
+    "hideGenerator": true,
+    "entryPoints": [
+        "electron.ts",
+        "src/App.tsx"
+    ]
+}
