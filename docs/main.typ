@@ -30,6 +30,8 @@
 ])
 #v(10pt)
 #align(center, text(style: "italic")[
+  #link("https://github.com/WajHub/BSK/tree/main")[#text(size: 9pt)[Link do Github]],
+  #linebreak()
   Adam Jakubowski 193352, Hubert Wajda 193511
 ])
 #v(3pt)
@@ -274,6 +276,9 @@ Krótki opis funkcji służącej do szyfrowania klucza prywatnego może wygląda
 #pagebreak()
 = Podsumowanie
 W ramach projektu udało nam się zaimplementować aplikację pomocniczą umożliwiającą generowanie kluczy RSA oraz szyfrowanie klucza prywatnego z wykorzystaniem algorytmu AES. Aplikacja została zbudowana w języku Python przy użyciu bibliotek kryptograficznych cryptography i Crypto. Dzięki zastosowaniu interfejsu Tkinter użytkownik może w prosty sposób generować klucze oraz zapisywać je na nośniku USB.
+
+= Link do Github
+#link("https://github.com/WajHub/BSK/tree/main")
 
 = Literatura
  - https://nodejs.org/api/crypto.html
