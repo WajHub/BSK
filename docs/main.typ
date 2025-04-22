@@ -230,12 +230,17 @@ Po poprawnym zapisaniu klucza prywatnego na nośniku USB użytkownik zostaje poi
   image("images/success.png", width: 70%),
   caption: [Okno informujące o sukcesie],
 )
-#pagebreak()
 === Okno informujące o błędzie
 W przypadku błędu podczas zapisu klucza prywatnego użytkownik zostaje poinformowany o błędzie.
 #figure(
   image("images/error.png", width: 70%),
   caption: [Okno informujące o błędzie],
+)
+=== Okno informujące o błędzie PINu
+W przypadku błędnego PINu użytkownik zostaje poinformowany o błędzie.
+#figure(
+  image("images/error_pin.png", width: 70%),
+  caption: [Okno informujące o błędzie PINu],
 )
 
 = Interfejs graficzny aplikacji głównej

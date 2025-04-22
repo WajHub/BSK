@@ -140,6 +140,12 @@ class AppGUI:
         @note W przypadku wygenerowania kluczy, wyświetla komunikat o sukcesie
         @return None
         """
+        # Validate PIN
+        pin = self.pin_entry.get()
+        if not pin.isdigit() or len(pin) != 4:
+            messagebox.showerror("Invalid PIN", "PIN must be exactly 4 digits.")
+            return
+
         if not self.selected_usb_path:
             messagebox.showerror("Error", "Please select a USB device first.")
             return
@@ -149,7 +155,7 @@ class AppGUI:
 
         public_key_path = os.path.join(keys_folder, 'public_key.pem')
         with open(public_key_path, 'wb') as public_key_file:
-            pem_public_key, encrypted_private_key = generate_private_key(self.pin_entry.get())
+            pem_public_key, encrypted_private_key = generate_private_key(pin)
             public_key_file.write(pem_public_key)
 
         private_key_path = os.path.join(keys_folder, 'private_key.pem')
